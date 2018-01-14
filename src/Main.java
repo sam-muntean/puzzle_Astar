@@ -56,7 +56,6 @@ public class Main {
                 if (m[i][j] == 0) {
                     posjZero = j;
                     posiZero = i;
-                    System.out.println("posiZero " + posiZero + " posjZero " + posjZero );
                 }
             }
         }
@@ -130,17 +129,12 @@ public class Main {
         int puzz[][] = mat;
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                //System.out.println("puzz[i][j]: " + puzz[i][j]);
-
                 if (puzz[i][j] != 0){
                     distance += abs(i - puzz[i][j]/4);
                     distance += abs(j - (puzz[i][j]%4));
                 }
-                //System.out.println("distanceeeeeee!!!!: "+distance);
             }
         }
-        //System.out.println("final distance!!!!: "+distance);
-
         return distance;
     }
 
@@ -164,18 +158,27 @@ public class Main {
                     i = j;
                 }
             }
-            path = front.get(i);
-            if (front.size() > i+1)
-                front.remove(i + 1);
+            if (i == 0 && front.size() == 1) {
+                path = front.get(i);
+                front.remove(0);
+            } else if (i == 0 && front.size() != 1) {
+                path = front.get(i);
+                front.remove(0);
+
+            } else if (front.size() > i) {
+                path = front.get(i);
+                front.remove(i);
+            }
+
             endNode = path.getValue().get(path.getValue().size() - 1);
-            if (Arrays.deepEquals(goal, endNode)){
+            if (Arrays.deepEquals(goal, endNode)) {
                 System.out.println("GGGGGGGGGGGGGGGGGGGGGGGGGGAAAAAAAAAAAAAAATTTTTTTTTTTTTTAAAAAAAAA");
-                break;}
+                break;
+            }
             boolean t = false;
             for (int[][] ii : expanded) {
                 if (Arrays.deepEquals(ii, endNode)) {
                     t = true;
-                    //System.out.println("GGGGGGGGGGGGGGGGGGGGGGGGGGAAAAAAAAAAAAAAATTTTTTTTTTTTTTAAAAAAAAA");
                     break;
                 }
             }
@@ -186,13 +189,16 @@ public class Main {
                 //k in expanded
                 for (int[][] kk : expanded) {
                     if (Arrays.deepEquals(kk, k))
-                        //System.out.println("GGGGGGGGGGGGGGGGGGGGGGGGGGAAAAAAAAAAAAAAATTTTTTTTTTTTTTAAAAAAAAA");
-                        t = true;
+                        tt = true;
                 }
-                if (t)
+                if (tt) {
+                    tt = false;
                     continue;
+                }
                 List<int[][]> toA = new ArrayList<>();
-                toA = path.getValue();
+                for (int[][] v : path.getValue()) {
+                    toA.add(v);
+                }
                 toA.add(k);
                 Pair<Integer, List<int[][]>> toAdd = new Pair<Integer, List<int[][]>>(path.getKey() + distance(k) - distance(endNode),
                         toA);
@@ -202,14 +208,22 @@ public class Main {
             }
             expandedStates++;
         }
-        System.out.println("expanded state" + expandedStates);
-
+        System.out.println("expanded state " + expandedStates);
+        System.out.println("Solution: ");
+        for (int[][] a : path.getValue()) {
+            for (int i = 0; i <= 3; i++) {
+                for (int j = 0; j <= 3; j++)
+                    System.out.print(a[i][j] + "\t");
+                System.out.println();
+            }
+            System.out.println("-----------");
+        }
     }
 
     public static void main(String[] args) {
 
         int[] numbers = {1, 2, 3, 4, 5, 6, 7, 0, 9, 8, 10, 11, 12, 13, 14, 15};
-        int[] ordered = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0};
+        int[] ordered = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
         int[][] puzzle = new int[4][4];
         int[][] goal = new int[4][4];
 
@@ -230,7 +244,7 @@ public class Main {
             System.out.println();
         }
         boolean isSolvable = isSolvable(puzzle);
-        System.out.println("is this solvable?" + isSolvable(puzzle));
+        System.out.println("is this solvable? - " + isSolvable(puzzle));
         List<int[][]> p = new ArrayList<>();
         Node root = new Node(p);
         Tree tree = new Tree();
@@ -239,7 +253,5 @@ public class Main {
             tree.traversePreorder(root, 5);
             solveAStar(puzzle, goal, root, tree);
         }
-        distance = distance(puzzle);
-        System.out.println("Distance in main " + distance);
     }
 }

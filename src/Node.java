@@ -15,11 +15,14 @@ public class Node {
     public Node() {
     }
 
-//    public void printData() {
-//        for(int i=0; i<=3; i++) {
-//            for (int j = 0; j <= 3; j++)
-//                System.out.print(data[i][j] + " ");
-//            System.out.println();
-//        }
-//    }
+    public void printData() {
+        for ( int[][] a : data
+             ) {
+            for (int i = 0; i <= 3; i++) {
+                for (int j = 0; j <= 3; j++)
+                    System.out.print(a[i][j] + " ");
+                System.out.println();
+            }
+        }
+    }
 }

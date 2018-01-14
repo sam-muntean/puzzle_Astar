@@ -24,8 +24,7 @@ public class Tree {
 
     public void traversePreorder(Node root, int position) {
         if (root != null) {
-            System.out.println("now?");
-            //root.printData();
+            root.printData();
             //System.out.println("traverse" + data);
             traversePreorder(root.left, position - 2);
             traversePreorder(root.right, position - 1);
