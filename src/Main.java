@@ -66,7 +66,11 @@ public class Main {
             aux= m[posiZero][posjZero];
             m[posiZero][posjZero] = m[posiZero-1][posjZero];
             m[posiZero-1][posjZero] = aux;
-            output.add(m);
+            int[][] lol = new int[4][4];
+            for(int i = 0; i<=3; i++)
+                for (int j = 0; j<=3; j++)
+                    lol[i][j] = m[i][j];
+            output.add(lol);
             aux= m[posiZero][posjZero];
             m[posiZero][posjZero] = m[posiZero-1][posjZero];
             m[posiZero-1][posjZero] = aux;
@@ -77,7 +81,11 @@ public class Main {
             aux= m[posiZero][posjZero];
             m[posiZero][posjZero] = m[posiZero+1][posjZero];
             m[posiZero+1][posjZero] = aux;
-            output.add(m);
+            int[][] lol = new int[4][4];
+            for(int i = 0; i<=3; i++)
+                for (int j = 0; j<=3; j++)
+                    lol[i][j] = m[i][j];
+            output.add(lol);
             aux= m[posiZero][posjZero];
             m[posiZero][posjZero] = m[posiZero+1][posjZero];
             m[posiZero+1][posjZero] = aux;
@@ -88,7 +96,11 @@ public class Main {
             aux= m[posiZero][posjZero];
             m[posiZero][posjZero] = m[posiZero][posjZero-1];
             m[posiZero][posjZero-1] = aux;
-            output.add(m);
+            int[][] lol = new int[4][4];
+            for(int i = 0; i<=3; i++)
+                for (int j = 0; j<=3; j++)
+                    lol[i][j] = m[i][j];
+            output.add(lol);
             aux= m[posiZero][posjZero];
             m[posiZero][posjZero] = m[posiZero][posjZero-1];
             m[posiZero][posjZero-1] = aux;
@@ -99,7 +111,11 @@ public class Main {
             aux= m[posiZero][posjZero];
             m[posiZero][posjZero] = m[posiZero][posjZero+1];
             m[posiZero][posjZero+1] = aux;
-            output.add(m);
+            int[][] lol = new int[4][4];
+            for(int i = 0; i<=3; i++)
+                for (int j = 0; j<=3; j++)
+                    lol[i][j] = m[i][j];
+            output.add(lol);
             aux= m[posiZero][posjZero];
             m[posiZero][posjZero] = m[posiZero][posjZero+1];
             m[posiZero][posjZero+1] = aux;
@@ -114,16 +130,16 @@ public class Main {
         int puzz[][] = mat;
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                System.out.println("puzz[i][j]: " + puzz[i][j]);
+                //System.out.println("puzz[i][j]: " + puzz[i][j]);
 
                 if (puzz[i][j] != 0){
                     distance += abs(i - puzz[i][j]/4);
                     distance += abs(j - (puzz[i][j]%4));
                 }
-                System.out.println("distanceeeeeee!!!!: "+distance);
+                //System.out.println("distanceeeeeee!!!!: "+distance);
             }
         }
-        System.out.println("final distance!!!!: "+distance);
+        //System.out.println("final distance!!!!: "+distance);
 
         return distance;
     }
