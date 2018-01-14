@@ -56,7 +56,7 @@ public class Main {
                 if (m[i][j] == 0) {
                     posjZero = j;
                     posiZero = i;
-                    System.out.println("posiZero " + posiZero + " posjZero " + posjZero );
+//                    System.out.println("posiZero " + posiZero + " posjZero " + posjZero );
                 }
             }
         }
@@ -66,7 +66,11 @@ public class Main {
             aux= m[posiZero][posjZero];
             m[posiZero][posjZero] = m[posiZero-1][posjZero];
             m[posiZero-1][posjZero] = aux;
-            output.add(m);
+            int[][] lol = new int[4][4];
+            for(int i = 0; i<=3; i++)
+                for (int j = 0; j<=3; j++)
+                    lol[i][j] = m[i][j];
+            output.add(lol);
             aux= m[posiZero][posjZero];
             m[posiZero][posjZero] = m[posiZero-1][posjZero];
             m[posiZero-1][posjZero] = aux;
@@ -77,7 +81,11 @@ public class Main {
             aux= m[posiZero][posjZero];
             m[posiZero][posjZero] = m[posiZero+1][posjZero];
             m[posiZero+1][posjZero] = aux;
-            output.add(m);
+            int[][] lol = new int[4][4];
+            for(int i = 0; i<=3; i++)
+                for (int j = 0; j<=3; j++)
+                    lol[i][j] = m[i][j];
+            output.add(lol);
             aux= m[posiZero][posjZero];
             m[posiZero][posjZero] = m[posiZero+1][posjZero];
             m[posiZero+1][posjZero] = aux;
@@ -88,7 +96,11 @@ public class Main {
             aux= m[posiZero][posjZero];
             m[posiZero][posjZero] = m[posiZero][posjZero-1];
             m[posiZero][posjZero-1] = aux;
-            output.add(m);
+            int[][] lol = new int[4][4];
+            for(int i = 0; i<=3; i++)
+                for (int j = 0; j<=3; j++)
+                    lol[i][j] = m[i][j];
+            output.add(lol);
             aux= m[posiZero][posjZero];
             m[posiZero][posjZero] = m[posiZero][posjZero-1];
             m[posiZero][posjZero-1] = aux;
@@ -99,7 +111,11 @@ public class Main {
             aux= m[posiZero][posjZero];
             m[posiZero][posjZero] = m[posiZero][posjZero+1];
             m[posiZero][posjZero+1] = aux;
-            output.add(m);
+            int[][] lol = new int[4][4];
+            for(int i = 0; i<=3; i++)
+                for (int j = 0; j<=3; j++)
+                    lol[i][j] = m[i][j];
+            output.add(lol);
             aux= m[posiZero][posjZero];
             m[posiZero][posjZero] = m[posiZero][posjZero+1];
             m[posiZero][posjZero+1] = aux;
@@ -109,18 +125,22 @@ public class Main {
         return output;
     }
 
-    public static int distance(int[][] mat) {
-        int distance = 0;
-        int puzz[][] = mat;
+    public static double distance(int[][] mat) {
+        double distance = 0;
+        double no = 0;
+        int puzz[][] = new int[4][4];
+        for(int i = 0; i<=3; i++)
+            for (int j = 0; j<=3; j++)
+                puzz[i][j] = mat[i][j];
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                System.out.println("puzz[i][j]: " + puzz[i][j]);
+//                System.out.println("puzz[i][j]: " + puzz[i][j]);
 
                 if (puzz[i][j] != 0){
-                    distance += abs(i - puzz[i][j]/4);
+                    distance += abs(i - puzz[i][j]/4.0);
                     distance += abs(j - (puzz[i][j]%4));
                 }
-                System.out.println("distanceeeeeee!!!!: "+distance);
+//                System.out.println("distanceeeeeee!!!!: "+distance);
             }
         }
         System.out.println("final distance!!!!: "+distance);
@@ -131,13 +151,13 @@ public class Main {
     public static void solveAStar(int[][] puzzle, int[][] goal, Node root, Tree tree) {
         List<int[][]> puzz = new ArrayList<>();
         puzz.add(puzzle);
-        List<Pair<Integer, List<int[][]>>> front = new ArrayList<>();
+        List<Pair<Double, List<int[][]>>> front = new ArrayList<>();
 
         front.add(new Pair<>(distance(puzzle), puzz));
 
         List<int[][]> expanded = new ArrayList<>();
-        Pair<Integer, List<int[][]>> path = new Pair<>(null, null);
-        Pair<Integer, List<int[][]>> newPath = new Pair<>(null, null);
+        Pair<Double, List<int[][]>> path = new Pair<>(null, null);
+        Pair<Double, List<int[][]>> newPath = new Pair<>(null, null);
         int[][] endNode = new int[4][4];
         //int[][] endNode = new int[4][4];
         int expandedStates = 0;
@@ -178,7 +198,7 @@ public class Main {
                 List<int[][]> toA = new ArrayList<>();
                 toA = path.getValue();
                 toA.add(k);
-                Pair<Integer, List<int[][]>> toAdd = new Pair<Integer, List<int[][]>>(path.getKey() + distance(k) - distance(endNode),
+                Pair<Double, List<int[][]>> toAdd = new Pair<Double, List<int[][]>>(path.getKey() + distance(k) - distance(endNode),
                         toA);
                 newPath = toAdd;
                 front.add(newPath);
@@ -197,7 +217,7 @@ public class Main {
         int[][] puzzle = new int[4][4];
         int[][] goal = new int[4][4];
 
-        int distance;
+        double distance;
 
         int line = 0;
         while (line < 4) {
@@ -225,5 +245,17 @@ public class Main {
         }
         distance = distance(puzzle);
         System.out.println("Distance in main " + distance);
+
+//        List<int[][]> output = moves(tree,puzzle,root);
+//        System.out.println("\nOutput from moves: ");
+//        for (int[][] m : output){
+//            for (int i = 0; i < 4; i++){
+//                for (int j = 0; j < 4; j++){
+//                    System.out.print(m[i][j] + " ");
+//                }
+//                System.out.println();
+//            }
+//            System.out.println();
+//        }
     }
 }
