@@ -1,10 +1,12 @@
+import java.util.List;
+
 public class Tree {
 
-    public Node createNode(int[][] value) {
+    public Node createNode(List<int[][]> value) {
         return new Node(value);
     }
 
-    public Node insert(Node n, int[][] value) {
+    public Node insert(Node n, List<int[][]> value) {
         if (n == null) {
             return createNode(value);
         } else if (n.left == null) {
@@ -23,7 +25,7 @@ public class Tree {
     public void traversePreorder(Node root, int position) {
         if (root != null) {
             System.out.println("now?");
-            root.printData();
+            //root.printData();
             //System.out.println("traverse" + data);
             traversePreorder(root.left, position - 2);
             traversePreorder(root.right, position - 1);

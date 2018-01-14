@@ -1,4 +1,7 @@
+import javafx.util.Pair;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.Math.abs;
@@ -41,9 +44,9 @@ public class Main {
     }
 
 
-    public static List<ArrayList<Integer>> moves(int[][] mat, Node root){
+    public static List<int[][]> moves(Tree tree, int[][] mat, Node root){
         int[][] m = mat;
-        List<ArrayList<Integer>> output = new ArrayList<ArrayList<Integer>>();
+        List<int[][]> output = new ArrayList<>();
 
         int posjZero = -1;
         int posiZero = -1;
@@ -63,8 +66,7 @@ public class Main {
             aux= m[posiZero][posjZero];
             m[posiZero][posjZero] = m[posiZero-1][posjZero];
             m[posiZero-1][posjZero] = aux;
-            //TODO: add to output
-
+            output.add(m);
             aux= m[posiZero][posjZero];
             m[posiZero][posjZero] = m[posiZero-1][posjZero];
             m[posiZero-1][posjZero] = aux;
@@ -75,8 +77,7 @@ public class Main {
             aux= m[posiZero][posjZero];
             m[posiZero][posjZero] = m[posiZero+1][posjZero];
             m[posiZero+1][posjZero] = aux;
-            //TODO: add to output
-
+            output.add(m);
             aux= m[posiZero][posjZero];
             m[posiZero][posjZero] = m[posiZero+1][posjZero];
             m[posiZero+1][posjZero] = aux;
@@ -87,8 +88,7 @@ public class Main {
             aux= m[posiZero][posjZero];
             m[posiZero][posjZero] = m[posiZero][posjZero-1];
             m[posiZero][posjZero-1] = aux;
-            //TODO: add to output
-
+            output.add(m);
             aux= m[posiZero][posjZero];
             m[posiZero][posjZero] = m[posiZero][posjZero-1];
             m[posiZero][posjZero-1] = aux;
@@ -99,14 +99,13 @@ public class Main {
             aux= m[posiZero][posjZero];
             m[posiZero][posjZero] = m[posiZero][posjZero+1];
             m[posiZero][posjZero+1] = aux;
-            //TODO: add to output
-
+            output.add(m);
             aux= m[posiZero][posjZero];
             m[posiZero][posjZero] = m[posiZero][posjZero+1];
             m[posiZero][posjZero+1] = aux;
         }
 
-//        tree.insert(root, output);
+        tree.insert(root, output);
         return output;
     }
 
@@ -127,6 +126,68 @@ public class Main {
         System.out.println("final distance!!!!: "+distance);
 
         return distance;
+    }
+
+    public static void solveAStar(int[][] puzzle, int[][] goal, Node root, Tree tree) {
+        List<int[][]> puzz = new ArrayList<>();
+        puzz.add(puzzle);
+        List<Pair<Integer, List<int[][]>>> front = new ArrayList<>();
+
+        front.add(new Pair<>(distance(puzzle), puzz));
+
+        List<int[][]> expanded = new ArrayList<>();
+        Pair<Integer, List<int[][]>> path = new Pair<>(null, null);
+        Pair<Integer, List<int[][]>> newPath = new Pair<>(null, null);
+        int[][] endNode = new int[4][4];
+        //int[][] endNode = new int[4][4];
+        int expandedStates = 0;
+        while (front.size() > 0) {
+            int i = 0;
+            for (int j = 1; j < front.size(); j++) {
+                if (front.get(i).getKey() > front.get(j).getKey()) {
+                    i = j;
+                }
+            }
+            path = front.get(i);
+            if (front.size() > i+1)
+                front.remove(i + 1);
+            endNode = path.getValue().get(path.getValue().size() - 1);
+            if (Arrays.deepEquals(goal, endNode)){
+                System.out.println("GGGGGGGGGGGGGGGGGGGGGGGGGGAAAAAAAAAAAAAAATTTTTTTTTTTTTTAAAAAAAAA");
+                break;}
+            boolean t = false;
+            for (int[][] ii : expanded) {
+                if (Arrays.deepEquals(ii, endNode)) {
+                    t = true;
+                    //System.out.println("GGGGGGGGGGGGGGGGGGGGGGGGGGAAAAAAAAAAAAAAATTTTTTTTTTTTTTAAAAAAAAA");
+                    break;
+                }
+            }
+            if (t)
+                continue;
+            boolean tt = false;
+            for (int[][] k : moves(tree, endNode, root)) {
+                //k in expanded
+                for (int[][] kk : expanded) {
+                    if (Arrays.deepEquals(kk, k))
+                        //System.out.println("GGGGGGGGGGGGGGGGGGGGGGGGGGAAAAAAAAAAAAAAATTTTTTTTTTTTTTAAAAAAAAA");
+                        t = true;
+                }
+                if (t)
+                    continue;
+                List<int[][]> toA = new ArrayList<>();
+                toA = path.getValue();
+                toA.add(k);
+                Pair<Integer, List<int[][]>> toAdd = new Pair<Integer, List<int[][]>>(path.getKey() + distance(k) - distance(endNode),
+                        toA);
+                newPath = toAdd;
+                front.add(newPath);
+                expanded.add(endNode);
+            }
+            expandedStates++;
+        }
+        System.out.println("expanded state" + expandedStates);
+
     }
 
     public static void main(String[] args) {
@@ -154,12 +215,13 @@ public class Main {
         }
         boolean isSolvable = isSolvable(puzzle);
         System.out.println("is this solvable?" + isSolvable(puzzle));
-        Node root = new Node();
+        List<int[][]> p = new ArrayList<>();
+        Node root = new Node(p);
         Tree tree = new Tree();
         if (isSolvable) {
-            root = tree.insert(root, puzzle);
+            root = tree.insert(root, p);
             tree.traversePreorder(root, 5);
-
+            solveAStar(puzzle, goal, root, tree);
         }
         distance = distance(puzzle);
         System.out.println("Distance in main " + distance);
