@@ -56,7 +56,7 @@ public class Main {
                 if (m[i][j] == 0) {
                     posjZero = j;
                     posiZero = i;
-//                    System.out.println("posiZero " + posiZero + " posjZero " + posjZero );
+                    System.out.println("posiZero " + posiZero + " posjZero " + posjZero );
                 }
             }
         }
@@ -143,7 +143,7 @@ public class Main {
 //                System.out.println("distanceeeeeee!!!!: "+distance);
             }
         }
-        System.out.println("final distance!!!!: "+distance);
+        //System.out.println("final distance!!!!: "+distance);
 
         return distance;
     }
