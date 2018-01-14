@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Math.abs;
+
 public class Main {
 
     public static boolean isSolvable(int[][] puzzle) {
@@ -36,9 +38,31 @@ public class Main {
             return parity % 2 == 0;
     }
 
-    public int distance(int[][] mat) {
+
+//    public static int[][] moves(int[][] mat, Node root){
+//        int[][] output;
+//
+//
+//        return output;
+//    }
+
+    public static int distance(int[][] mat) {
         int distance = 0;
-        for (int i = 0; i <= 3; i++)
+        int puzz[][] = mat;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                System.out.println("puzz[i][j]: " + puzz[i][j]);
+
+                if (puzz[i][j] != 0){
+                    distance += abs(i - puzz[i][j]/4);
+                    distance += abs(j - (puzz[i][j]%4));
+                }
+                System.out.println("distanceeeeeee!!!!: "+distance);
+            }
+        }
+        System.out.println("final distance!!!!: "+distance);
+
+        return distance;
     }
 
     public static void main(String[] args) {
@@ -47,6 +71,8 @@ public class Main {
         int[] ordered = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0};
         int[][] puzzle = new int[4][4];
         int[][] goal = new int[4][4];
+
+        int distance;
 
         int line = 0;
         while (line < 4) {
@@ -71,5 +97,7 @@ public class Main {
             tree.traversePreorder(root, 5);
 
         }
+        distance = distance(puzzle);
+        System.out.println("Distance in main " + distance);
     }
 }
