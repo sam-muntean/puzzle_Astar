@@ -2,6 +2,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.incrementExact;
+import static java.lang.Math.pow;
 
 public class Main {
 
@@ -39,12 +41,74 @@ public class Main {
     }
 
 
-//    public static int[][] moves(int[][] mat, Node root){
-//        int[][] output;
-//
-//
-//        return output;
-//    }
+    public static List<ArrayList<Integer>> moves(int[][] mat, Node root){
+        int[][] m = mat;
+        List<ArrayList<Integer>> output = new ArrayList<ArrayList<Integer>>();
+
+        int posjZero = -1;
+        int posiZero = -1;
+        int aux;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (m[i][j] == 0) {
+                    posjZero = j;
+                    posiZero = i;
+                    System.out.println("posiZero " + posiZero + " posjZero " + posjZero );
+                }
+            }
+        }
+
+//        move UP
+        if(posiZero > 0){
+            aux= m[posiZero][posjZero];
+            m[posiZero][posjZero] = m[posiZero-1][posjZero];
+            m[posiZero-1][posjZero] = aux;
+            //TODO: add to output
+
+            aux= m[posiZero][posjZero];
+            m[posiZero][posjZero] = m[posiZero-1][posjZero];
+            m[posiZero-1][posjZero] = aux;
+        }
+
+//        move DOWN
+        if(posiZero < 3){
+            aux= m[posiZero][posjZero];
+            m[posiZero][posjZero] = m[posiZero+1][posjZero];
+            m[posiZero+1][posjZero] = aux;
+            //TODO: add to output
+
+            aux= m[posiZero][posjZero];
+            m[posiZero][posjZero] = m[posiZero+1][posjZero];
+            m[posiZero+1][posjZero] = aux;
+        }
+
+//        move LEFT
+        if (posjZero > 0){
+            aux= m[posiZero][posjZero];
+            m[posiZero][posjZero] = m[posiZero][posjZero-1];
+            m[posiZero][posjZero-1] = aux;
+            //TODO: add to output
+
+            aux= m[posiZero][posjZero];
+            m[posiZero][posjZero] = m[posiZero][posjZero-1];
+            m[posiZero][posjZero-1] = aux;
+        }
+
+//        move RIGHT
+        if (posjZero < 3){
+            aux= m[posiZero][posjZero];
+            m[posiZero][posjZero] = m[posiZero][posjZero+1];
+            m[posiZero][posjZero+1] = aux;
+            //TODO: add to output
+
+            aux= m[posiZero][posjZero];
+            m[posiZero][posjZero] = m[posiZero][posjZero+1];
+            m[posiZero][posjZero+1] = aux;
+        }
+
+//        tree.insert(root, output);
+        return output;
+    }
 
     public static int distance(int[][] mat) {
         int distance = 0;
