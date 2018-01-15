@@ -1,8 +1,8 @@
 import javafx.util.Pair;
+import sun.awt.Mutex;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.*;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.incrementExact;
@@ -60,77 +60,18 @@ public class Main {
             }
         }
 
-//        move UP
-        if(posiZero > 0){
-            aux= m[posiZero][posjZero];
-            m[posiZero][posjZero] = m[posiZero-1][posjZero];
-            m[posiZero-1][posjZero] = aux;
-            int[][] lol = new int[4][4];
-            for(int i = 0; i<=3; i++)
-                for (int j = 0; j<=3; j++)
-                    lol[i][j] = m[i][j];
-            output.add(lol);
-            aux= m[posiZero][posjZero];
-            m[posiZero][posjZero] = m[posiZero-1][posjZero];
-            m[posiZero-1][posjZero] = aux;
-        }
-
-//        move DOWN
-        if(posiZero < 3){
-            aux= m[posiZero][posjZero];
-            m[posiZero][posjZero] = m[posiZero+1][posjZero];
-            m[posiZero+1][posjZero] = aux;
-            int[][] lol = new int[4][4];
-            for(int i = 0; i<=3; i++)
-                for (int j = 0; j<=3; j++)
-                    lol[i][j] = m[i][j];
-            output.add(lol);
-            aux= m[posiZero][posjZero];
-            m[posiZero][posjZero] = m[posiZero+1][posjZero];
-            m[posiZero+1][posjZero] = aux;
-        }
-
-//        move LEFT
-        if (posjZero > 0){
-            aux= m[posiZero][posjZero];
-            m[posiZero][posjZero] = m[posiZero][posjZero-1];
-            m[posiZero][posjZero-1] = aux;
-            int[][] lol = new int[4][4];
-            for(int i = 0; i<=3; i++)
-                for (int j = 0; j<=3; j++)
-                    lol[i][j] = m[i][j];
-            output.add(lol);
-            aux= m[posiZero][posjZero];
-            m[posiZero][posjZero] = m[posiZero][posjZero-1];
-            m[posiZero][posjZero-1] = aux;
-        }
-
-//        move RIGHT
-        if (posjZero < 3){
-            aux= m[posiZero][posjZero];
-            m[posiZero][posjZero] = m[posiZero][posjZero+1];
-            m[posiZero][posjZero+1] = aux;
-            int[][] lol = new int[4][4];
-            for(int i = 0; i<=3; i++)
-                for (int j = 0; j<=3; j++)
-                    lol[i][j] = m[i][j];
-            output.add(lol);
-            aux= m[posiZero][posjZero];
-            m[posiZero][posjZero] = m[posiZero][posjZero+1];
-            m[posiZero][posjZero+1] = aux;
-        }
 
         tree.insert(root, output);
         return output;
     }
 
-    public static int distance(int[][] mat) {
-        int distance = 0;
+    public static double distance(int[][] mat) {
+        double distance = 0;
         int puzz[][] = mat;
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 if (puzz[i][j] != 0){
-                    distance += abs(i - puzz[i][j]/4);
+                    distance += abs(i - puzz[i][j]/4.0);
                     distance += abs(j - (puzz[i][j]%4));
                 }
             }
@@ -138,18 +79,16 @@ public class Main {
         return distance;
     }
 
-    public static void solveAStar(int[][] puzzle, int[][] goal, Node root, Tree tree) {
+    public static void solveAStar(int[][] puzzle, int[][] goal, Node root, Tree tree) throws ExecutionException, InterruptedException {
         List<int[][]> puzz = new ArrayList<>();
         puzz.add(puzzle);
-        List<Pair<Integer, List<int[][]>>> front = new ArrayList<>();
-
+        List<Pair<Double, List<int[][]>>> front = new ArrayList<>();
         front.add(new Pair<>(distance(puzzle), puzz));
 
-        List<int[][]> expanded = new ArrayList<>();
-        Pair<Integer, List<int[][]>> path = new Pair<>(null, null);
-        Pair<Integer, List<int[][]>> newPath = new Pair<>(null, null);
-        int[][] endNode = new int[4][4];
-        //int[][] endNode = new int[4][4];
+        Set<int[][]> expanded = new LinkedHashSet<>();
+        Pair<Double, List<int[][]>> path = new Pair<>(null, null);
+        Pair<Double, List<int[][]>> newPath;
+        int[][] endNode ;
         int expandedStates = 0;
         while (front.size() > 0) {
             int i = 0;
@@ -175,37 +114,53 @@ public class Main {
                 System.out.println("GGGGGGGGGGGGGGGGGGGGGGGGGGAAAAAAAAAAAAAAATTTTTTTTTTTTTTAAAAAAAAA");
                 break;
             }
-            boolean t = false;
-            for (int[][] ii : expanded) {
-                if (Arrays.deepEquals(ii, endNode)) {
-                    t = true;
-                    break;
-                }
-            }
-            if (t)
+
+            if (expanded.contains(endNode))
                 continue;
-            boolean tt = false;
-            for (int[][] k : moves(tree, endNode, root)) {
-                //k in expanded
-                for (int[][] kk : expanded) {
-                    if (Arrays.deepEquals(kk, k))
-                        tt = true;
-                }
-                if (tt) {
-                    tt = false;
-                    continue;
-                }
-                List<int[][]> toA = new ArrayList<>();
-                for (int[][] v : path.getValue()) {
-                    toA.add(v);
-                }
-                toA.add(k);
-                Pair<Integer, List<int[][]>> toAdd = new Pair<Integer, List<int[][]>>(path.getKey() + distance(k) - distance(endNode),
-                        toA);
-                newPath = toAdd;
-                front.add(newPath);
-                expanded.add(endNode);
+
+//            boolean tt = false;
+//            for (int[][] k : moves(tree, endNode, root)) {
+//                //k in expanded
+//                for (int[][] kk : expanded) {
+//                    if (Arrays.deepEquals(kk, k)){
+//                        tt = true;
+//                        break;
+//                    }
+//                }
+//                if (tt) {
+//                    tt = false;
+//                    continue;
+//                }
+//                List<int[][]> toA = new ArrayList<>();
+//                toA.addAll(path.getValue());
+//                toA.add(k);
+//
+//                newPath = new Pair<>(path.getKey() + distance(k) - distance(endNode), toA);
+//                front.add(newPath);
+//                expanded.add(endNode);
+//            }
+            Mutex mutex = new Mutex();
+
+            ExecutorService executor = Executors.newFixedThreadPool(4);
+            List<Future<Pair<Double, List<int[][]>>>> newPaths = new ArrayList<>();
+            List<int[][]> addTree = new ArrayList<>();
+            for(int idx = 0; idx < 4; idx++) {
+                int direction = idx;
+                Callable<Pair<Double, List<int[][]>>> task = new ComputePath(addTree, mutex, expanded, path, endNode, root, tree, direction);
+                newPaths.add(executor.submit(task));
             }
+
+            for(int idx = 0; idx < 4; idx++) {
+                newPath = newPaths.get(idx).get();
+                mutex.lock();
+                if (newPath != null) {
+                    front.add(newPath);
+                    expanded.add(endNode);
+                }
+                mutex.unlock();
+            }
+            executor.shutdownNow();
+
             expandedStates++;
         }
         System.out.println("expanded state " + expandedStates);
@@ -216,18 +171,17 @@ public class Main {
                     System.out.print(a[i][j] + "\t");
                 System.out.println();
             }
-            System.out.println("-----------");
+            System.out.println("---------------");
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
 
         int[] numbers = {1, 2, 3, 4, 5, 6, 7, 0, 9, 8, 10, 11, 12, 13, 14, 15};
         int[] ordered = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
         int[][] puzzle = new int[4][4];
         int[][] goal = new int[4][4];
 
-        int distance;
 
         int line = 0;
         while (line < 4) {
